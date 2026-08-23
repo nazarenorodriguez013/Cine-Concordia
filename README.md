@@ -6,7 +6,7 @@ Integrantes:
 -Leonardo Mover
 -Santiago Jacobo
 -Nazareno Rodriguez 
--Valentin Revoli
+-Valentin Reboli
 Descripción general
 CineTicket es una plataforma web que permite a los usuarios consultar la cartelera de un cine, elegir función y horario, seleccionar sus butacas y comprar entradas de forma online, evitando las filas físicas en boletería.
 Objetivo
