@@ -1,59 +1,47 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Cine Concordia
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma web de venta de entradas online para cines. Permite al cine gestionar y publicar sus funciones, mientras que los usuarios pueden consultar la cartelera, elegir función y horario, seleccionar butacas y comprar entradas de forma online.
 
-## About Laravel
+Proyecto de la materia Programación 4.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Equipo
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Leonardo Mover
+- Santiago Jacobo
+- Nazareno Rodriguez
+- Valentin Reboli
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Características principales
 
-## Learning Laravel
+- Consulta de cartelera y disponibilidad de asientos en tiempo real
+- Compra de entradas online con selección de butacas
+- Entradas digitales con código QR enviadas por Telegram y email
+- Marketing y notificaciones por WhatsApp y email
+- Panel administrativo para gestionar funciones, películas, salas, horarios y promociones
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Estructura de base de datos
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Tablas
 
-## Laravel Sponsors
+- **usuarios**: cuentas de usuario. `id` (SERIAL PK), `nombre`, `apellido`, `correo` (unique), `telefono`, `password_hash`, `rol` (CLIENTE/ADMIN/EMPLEADO, default), `creado_en`, `actualizado_en`.
+- **generos**: categorías de películas. `id` (SERIAL PK), `nombre` (unique VARCHAR).
+- **peliculas**: `id`, `titulo`, `sinopsis`, `duracion_min`, `clasificacion`, `poster_url`, `backdrop_url`, `trailer_url`, `en_cartelera` (boolean), `fecha_estreno`, `activa` (boolean), timestamps.
+- **pelicula_generos**: tabla intermedia película↔género. `pelicula_id` (FK), `genero_id` (FK), clave primaria compuesta.
+- **salas**: `id`, `nombre`, `filas`, `columnas`, `capacidad_total`, `activa` (boolean).
+- **butacas**: `id`, `sala_id` (FK), `fila` (letra), `numero`, `tipo` (STANDARD/VIP/ACCESIBLE/INHABILITADA); unique en (`sala_id`, `fila`, `numero`).
+- **funciones**: `pelicula_id` (FK), `sala_id` (FK), `fecha_hora`, `formato` (2D/3D/ATMOS), `idioma` (DOB/SUB), `precio_base`, `cancelada`.
+- **tipos_entrada**: `id`, `nombre` (unique), `ajuste_precio`, `activo` (boolean).
+- **reservas**: `usuario_id` (nullable), `funcion_id` (FK), datos de contacto de invitado, `total`, `estado` (PENDIENTE/PAGADA/CANCELADA/EXPIRADA), `codigo_qr`.
+- **reserva_butacas**: relación reserva↔butaca. `estado_bloqueo` (TEMPORAL/OCUPADO/LIBERADO), `expira_en` (timestamp), índice único parcial.
+- **pagos**: `reserva_id` (FK), `metodo`, `estado`, `comprobante`, `monto`, `pagado_en`.
+- **promociones**: `tag`, `titulo`, `descripcion`, `activa_desde`/`activa_hasta`, `activa`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Relaciones
 
-### Premium Partners
+- 1:N — usuarios → reservas
+- 1:N — peliculas → funciones
+- 1:N — salas → butacas, salas → funciones
+- 1:N — funciones → reservas, funciones → reserva_butacas
+- 1:N — reservas → pagos
+- M:N — peliculas ↔ generos (vía `pelicula_generos`)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
