@@ -1,0 +1,8 @@
+@import 'assets/css/base.css';
+@import 'assets/css/hero.css';
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
